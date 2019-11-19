@@ -68,7 +68,7 @@ var mongoPromise = mongoose.connect('mongodb://localhost/abadon', {
 
 const port = process.env.PORT || 4000;
 // const hostname = process.env.hostname;
-const environment = process.env.NODE_ENV;
+const environment = process.env.NODE_ENV || 'development';
 
 mongoPromise.then(() => {
   server.listen(port, () =>
