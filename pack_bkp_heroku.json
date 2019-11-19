@@ -1,0 +1,40 @@
+{
+  "name": "theocraticwallserver",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "license": "MIT",
+  "author": "Manolo Alvarez Foro",
+  "scripts": {
+    "start": "node dist/app.js",
+    "build": "babel src --out-dir dist",
+    "serve": "node dist/app.js"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "apollo-server": "^2.8.1",
+    "apollo-server-express": "^2.8.1",
+    "babel-loader": "^8.0.6",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "express-jwt": "^5.3.1",
+    "express-promise-router": "^3.0.3",
+    "graphql": "^14.4.2",
+    "graphql-tools": "^4.0.5",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "mongodb": "^3.3.0",
+    "mongoose": "^5.6.9",
+    "subscriptions-transport-ws": "^0.9.16"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "nodemon": "^1.19.1"
+  }
+}
