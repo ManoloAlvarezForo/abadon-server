@@ -4,34 +4,41 @@ import moment from 'moment';
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
-    productId: {type: String, default: ''},
-    image: String,
-    productName: String,
-    price: Number,
-    description: String,
-    isAvailable: Boolean,
-    availableQuantity: Number,
-    createdDate: { type: String, default: moment().format()}
+  productId: { type: String, default: '' },
+  image: String,
+  productName: String,
+  price: Number,
+  description: String,
+  isAvailable: { type: Boolean, default: false },
+  availableQuantity: Number,
+  createdDate: { type: String, default: moment().format() }
 });
 
-let CounterSchema = new Schema({
-    _id: {type: String, required: true},
-    seq: { type: Number, default: 0 }
-});
+//Note: unblock the code to add a custom autimatic id for the productId.
+// let CounterSchema = new Schema({
+//   _id: { type: String, required: true },
+//   seq: { type: Number, default: 0 }
+// });
 
-let counter = mongoose.model('counter', CounterSchema);
+// let counter = mongoose.model('counter', CounterSchema);
 
-productSchema.pre('save', function(next) {
-    var doc = this;
-    counter.findByIdAndUpdate({_id: 'productId'}, {$inc: { seq: 1} }, {new: true, upsert: true}).then(function(count) {
-        doc.productId = count.seq;
-        next();
-    })
-    .catch(function(error) {
-        console.error("counter error-> : "+error);
-        throw error;
-    });
-});
+// productSchema.pre('save', function(next) {
+//   var doc = this;
+//   counter
+//     .findByIdAndUpdate(
+//       { _id: 'productId' },
+//       { $inc: { seq: 1 } },
+//       { new: true, upsert: true }
+//     )
+//     .then(function(count) {
+//       doc.productId = count.seq;
+//       next();
+//     })
+//     .catch(function(error) {
+//       console.error('counter error-> : ' + error);
+//       throw error;
+//     });
+// });
 
 /**
  * Product mongoose schema.

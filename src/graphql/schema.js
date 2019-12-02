@@ -6,6 +6,7 @@ import { Preaching, PreachingResolvers } from './preaching';
 import { PublicMeeting, PublicMeetingResolvers } from './publicMeeting';
 import { Event, EventResolvers } from './event';
 import { Notification, NotificationResolvers } from './notification';
+import { Product, ProductResolvers } from './product';
 import { makeExecutableSchema } from 'graphql-tools';
 
 const Query = `
@@ -20,6 +21,8 @@ const Query = `
         getEventsByMonth(month: String, year: String, locale: String): [EventOutput]
         getUnreadNotificationsSize(userId: String): UnreadNotificationsSize
         recentEvents(today: String): [EventOutput]
+        products: [Product]
+        productsByFilter(query: String, properties: [String]): [Product]
     }
 `;
 
@@ -30,6 +33,7 @@ const Mutation = `
         addPreachingEvent(event: PreachingInput): Preaching
         addPublicMeeting(event: PublicMeetingInput): PublicMeeting
         sendNotificationByUserId(userId: String, title: String, text: String): Notification
+        addProduct(product: ProductInput): Product 
     }
 `;
 
@@ -54,6 +58,7 @@ export default makeExecutableSchema({
     Query,
     Mutation,
     Subscription,
+    Product
   ],
   resolvers: merge(
     resolvers,
@@ -62,7 +67,8 @@ export default makeExecutableSchema({
     PreachingResolvers,
     PublicMeetingResolvers,
     EventResolvers,
-    NotificationResolvers
+    NotificationResolvers,
+    ProductResolvers
   ),
-  resolverValidationOptions: { requireResolversForResolveType: false },
+  resolverValidationOptions: { requireResolversForResolveType: false }
 });
