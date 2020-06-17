@@ -1,14 +1,16 @@
-import mongoose from 'mongoose';
-import Event from './event';
+import mongoose from "mongoose";
+import Event from "./event";
+
+const { Schema } = mongoose;
 
 Event.discriminator(
-  'preaching',
-  new mongoose.Schema({
+  "preaching",
+  new Schema({
     lead: String,
     territories: [String],
     moment: String,
-    type: { type: String, default: 'preaching'}
-  }),
+    type: { type: String, default: "preaching" },
+  })
 );
 
-export default mongoose.model('preaching');
+export default mongoose.model("preaching");

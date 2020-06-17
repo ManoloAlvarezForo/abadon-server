@@ -1,6 +1,7 @@
-import * as AuthenticationResolver from '../resolvers/authentication';
+import * as AuthenticationResolver from "../resolvers/authentication";
+import { gql } from "apollo-server";
 
-export const Authentication = `
+export const Authentication = gql`
   type AuthPayLoad {
     token: String
     user: User
@@ -23,6 +24,7 @@ export const AuthenticationResolvers = {
       return AuthenticationResolver.signup(args);
     },
     login(_, args) {
+      console.log(`[INFO] Login process...`);
       return AuthenticationResolver.login(args);
     },
   },

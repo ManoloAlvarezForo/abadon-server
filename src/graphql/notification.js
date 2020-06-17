@@ -1,8 +1,9 @@
-import * as NotificationsResolver from '../resolvers/notifications';
-import { withFilter } from 'graphql-subscriptions';
-import { pubsub } from '../app';
+import * as NotificationsResolver from "../resolvers/notifications";
+import { withFilter } from "graphql-subscriptions";
+import { pubsub } from "../app";
+import { gql } from "apollo-server";
 
-export const Notification = `
+export const Notification = gql`
   type Notification {
     title: String
     text: String
@@ -20,7 +21,7 @@ export const NotificationResolvers = {
   Subscription: {
     notificationSent: {
       subscribe: withFilter(
-        () => pubsub.asyncIterator('notificationSent'),
+        () => pubsub.asyncIterator("notificationSent"),
         (payload, variables, context) => {
           const user = context.user;
           // The payload in that case is the new preaching and the variables comes from the params.

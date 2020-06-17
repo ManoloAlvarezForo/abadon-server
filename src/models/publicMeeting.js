@@ -1,16 +1,19 @@
-import mongoose from 'mongoose';
-import Event from './event';
+import mongoose from "mongoose";
+import Event from "./event";
+
+const { Schema } = mongoose;
+const SCHEMA_NAME = "publicMeeting";
 
 Event.discriminator(
-  'publicMeeting',
-  new mongoose.Schema({
+  SCHEMA_NAME,
+  new Schema({
     meetingType: String,
     president: String,
     speaker: String,
     watchtowerGuider: String,
     watchtowerReader: String,
-    type: { type: String, default: 'meeting'}
-  }),
+    type: { type: String, default: "meeting" },
+  })
 );
 
-export default mongoose.model('publicMeeting');
+export default mongoose.model(SCHEMA_NAME);

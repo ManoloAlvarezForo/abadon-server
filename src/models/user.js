@@ -1,21 +1,14 @@
-import mongoose from 'mongoose';
-import moment from 'moment';
+import mongoose from "mongoose";
+import moment from "moment";
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
+const SCHEMA_NAME = "user";
 
 export default mongoose.model(
-  'user',
+  SCHEMA_NAME,
   new Schema({
     name: String,
     email: String,
     password: String,
-    notifications: [
-      {
-        text: String,
-        title: String,
-        isChecked: { type: Boolean, default: false },
-        createdDate: { type: String, default: moment().format() },
-      },
-    ],
   })
 );

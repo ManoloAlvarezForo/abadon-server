@@ -1,7 +1,8 @@
-import * as UserResolver from '../resolvers/user';
+import * as UserResolver from "../resolvers/user";
+import { gql } from "apollo-server";
 
-export const User = `
-type User {
+export const User = gql`
+  type User {
     id: String
     name: String
     email: String

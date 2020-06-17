@@ -1,15 +1,15 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { APP_SECRET } from '../utils/utils';
-import * as UserResolver from '../resolvers/user';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { APP_SECRET } from "../utils/utils";
+import { getUserByEmail, getUserById, addUser } from "../resolvers/user";
 
 /**
  * Creates the token according the user param.
  *
  * @param {object} user User Object.
  */
-const createToken = user => {
-  return jwt.sign({ userId: user.id }, APP_SECRET);
+const createToken = ({ id }) => {
+  return jwt.sign({ userId: id }, APP_SECRET);
 };
 
 /**
@@ -17,18 +17,28 @@ const createToken = user => {
  *
  * @param {Object} args Arguments that contains the user object.
  */
-export const login = async args => {
-  const user = await UserResolver.getUserByEmail(args.email);
+export const login = async (args) => {
+  const user = await getUserByEmail(args.email);
 
   if (!user) {
-    throw new Error('No such user found');
+    console.log(`[ERROR]: Usuario no encontrado.`);
+    // console.log(`[ERROR] User not found`);
+
+    throw new Error("El usuario no existe.");
+    // throw new Error("No such user found");
   }
 
   const valid = await bcrypt.compare(args.password, user.password);
 
   if (!valid) {
-    throw new Error('Invalid password');
+    console.log(`[ERROR]: Password no valido.`);
+    // console.log(`[INFO] invalid password...`);
+
+    throw new Error("[ERROR]: Password no valido.");
+    // throw new Error("Invalid password");
   }
+  console.log(`[INFO]: Acceso correcto.`);
+  // console.log(`[INFO] user logged sussesfully...`);
 
   return {
     token: createToken(user),
@@ -41,7 +51,7 @@ export const login = async args => {
  *
  * @param {String} token JWT Token to be validated.
  */
-export const isValidToken = token => {
+export const isValidToken = (token) => {
   let isValid = { isValid: false };
 
   try {
@@ -60,11 +70,11 @@ export const isValidToken = token => {
  *
  * @param {String} token JWT Token.
  */
-export const getUserByToken = async token => {
+export const getUserByToken = async (token) => {
   let userResponse = null;
   try {
     const response = jwt.verify(token, APP_SECRET);
-    userResponse = await UserResolver.getUserById(response.userId);
+    userResponse = await getUserById(response.userId);
   } catch (error) {
     console.log(error);
   }
@@ -77,18 +87,19 @@ export const getUserByToken = async token => {
  *
  * @param {Object} args Arguments that contains the user object.
  */
-export const signup = async args => {
+export const signup = async (args) => {
   //Validates if he email of the new user exist and throw an error.
-  const userFound = await UserResolver.getUserByEmail(args.email);
+  const userFound = await getUserByEmail(args.email);
   if (userFound) {
-    throw new Error('This user already exists...');
+    throw new Error("El usuario ya existe.");
+    // throw new Error("This user already exists...");
   }
 
   //Encrypt the password.
   const cryptPassword = await bcrypt.hash(args.password, 10);
 
   //Create the new user.
-  const user = await UserResolver.addUser({
+  const user = await addUser({
     name: args.name,
     email: args.email,
     password: cryptPassword,

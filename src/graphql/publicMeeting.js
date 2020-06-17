@@ -1,33 +1,34 @@
-import * as PublicMeetingResolver from '../resolvers/publicMeeting';
+import * as PublicMeetingResolver from "../resolvers/publicMeeting";
+import { gql } from "apollo-server";
 
-export const PublicMeeting = `
-    type PublicMeeting implements EventInterface {
-        id: String
-        title: String
-        date: String
-        time: String
-        location: String
-        description: String
-        meetingType: String
-        president: String
-        speaker: String
-        watchtowerGuider: String
-        watchtowerReader: String
-        type: String
-    }
+export const PublicMeeting = gql`
+  type PublicMeeting implements EventInterface {
+    id: String
+    title: String
+    date: String
+    time: String
+    location: String
+    description: String
+    meetingType: String
+    president: String
+    speaker: String
+    watchtowerGuider: String
+    watchtowerReader: String
+    type: String
+  }
 
-    input PublicMeetingInput {
-        title: String
-        date: String
-        time: String
-        location: String
-        description: String
-        meetingType: String
-        president: String
-        speaker: String
-        watchtowerGuider: String
-        watchtowerReader: String
-    }
+  input PublicMeetingInput {
+    title: String
+    date: String
+    time: String
+    location: String
+    description: String
+    meetingType: String
+    president: String
+    speaker: String
+    watchtowerGuider: String
+    watchtowerReader: String
+  }
 `;
 
 export const PublicMeetingResolvers = {

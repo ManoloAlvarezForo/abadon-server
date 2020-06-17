@@ -1,18 +1,52 @@
-import mongoose from 'mongoose';
-import moment from 'moment';
+import mongoose from "mongoose";
+import moment from "moment";
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
+const SCHEMA_NAME = "product";
 
-const productSchema = new Schema({
-  productId: { type: String, default: '' },
-  image: String,
-  productName: String,
-  price: Number,
-  description: String,
-  isAvailable: { type: Boolean, default: false },
-  availableQuantity: Number,
-  createdDate: { type: String, default: moment().format() }
-});
+/**
+ * Product mongoose schema.
+ */
+export default mongoose.model(
+  SCHEMA_NAME,
+  new Schema({
+    productId: { type: String, default: "" },
+    client: { type: Schema.Types.ObjectId, ref: "client" },
+    thumbs: [{ type: Schema.Types.ObjectId, ref: "thumbnail" }],
+    productName: String,
+    promo: { type: Boolean, default: false },
+    newPrice: { type: Number, default: 0.0 },
+    price: { type: Number, default: 0.0 },
+    description: { type: String, default: "" },
+    promoDescription: { type: String, default: "" },
+    isAvailable: { type: Boolean, default: false },
+    availableQuantity: { type: Number, default: 0 },
+    createdDate: { type: String, default: moment().format() },
+    comments: [
+      {
+        user: { type: String, default: "" },
+        userId: { type: String, default: "" },
+        comment: String,
+        createdDate: { type: String, default: moment().format() },
+      },
+    ],
+    //TODO: Maybe not generic property.
+    buildTime: { type: String, default: "" },
+    kind: [
+      {
+        type: String,
+        enum: ["SERVICE", "PRODUCT", "FOOD"],
+      },
+    ],
+    //TODO: Should be dynamic
+    categories: [
+      {
+        type: String,
+        enum: ["CARNE", "POLLO", "CHANCHO", "PASTA"],
+      },
+    ],
+  })
+);
 
 //Note: unblock the code to add a custom autimatic id for the productId.
 // let CounterSchema = new Schema({
@@ -39,8 +73,3 @@ const productSchema = new Schema({
 //       throw error;
 //     });
 // });
-
-/**
- * Product mongoose schema.
- */
-export default mongoose.model('product', productSchema);

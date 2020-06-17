@@ -1,5 +1,7 @@
-export const EventInterface = `
-interface EventInterface {
+import { gql } from "apollo-server";
+
+export const EventInterface = gql`
+  interface EventInterface {
     title: String
     date: String
     time: String
@@ -7,3 +9,7 @@ interface EventInterface {
     description: String
   }
 `;
+
+export const EventInterfaceResolvers = {
+  Query: {},
+};

@@ -1,40 +1,132 @@
-import * as ProductResolver from '../resolvers/product';
+import {
+  getProducts,
+  getProductsByFilter,
+  addProduct,
+  getProductById,
+  addComment,
+  comments,
+  getProductCategories,
+} from "../resolvers/product";
+import { withFilter } from "graphql-subscriptions";
+import { pubsub } from "../app";
+import { gql } from "apollo-server";
 
-export const Product = `
-type Product {
-    id: String,
-    productId: String,
-    image: String,
-    productName: String,
-    price: Float,
-    description: String,
-    isAvailable: Boolean,
-    availableQuantity: Int,
+export const Product = gql`
+  type Comment {
+    id: String
+    user: String
+    userId: String
+    comment: String
     createdDate: String
-}
-input ProductInput {
-    image: String!,
-    productName: String,
-    price: Float,
-    description: String,
-    availableQuantity: Int,
-    productId: String,
-}
+  }
+
+  type ThumbFormat {
+    ext: String
+    mime: String
+    width: Int
+    height: Int
+    size: Int
+    url: String
+  }
+
+  type ThumbFormats {
+    thumbnail: ThumbFormat
+    medium: ThumbFormat
+    small: ThumbFormat
+    large: ThumbFormat
+  }
+
+  type Thumb {
+    name: String
+    width: Int
+    height: Int
+    formats: ThumbFormats
+    ext: String
+    mime: String
+    size: Int
+    url: String
+    created_at: String
+    updated_at: String
+  }
+
+  type Product {
+    id: String
+    productId: String
+    client: Client
+    thumbs: [Thumb]
+    productName: String
+    price: Float
+    description: String
+    isAvailable: Boolean
+    availableQuantity: Int
+    createdDate: String
+    comments: [Comment]
+    kind: String
+    categories: [String]
+    promoDescription: String
+  }
+
+  type ProductCategory {
+    name: String
+  }
+
+  input ProductCategoryInput {
+    name: String
+  }
+
+  input ProductInput {
+    productName: String
+    price: Float!
+    description: String
+    availableQuantity: Int
+    productId: String
+    kind: String
+    categories: [ProductCategoryInput]
+    promoDescription: String
+  }
 `;
 
 export const ProductResolvers = {
+  Subscription: {
+    productAdded: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator("productAdded"),
+        (payload, variables, context) => {
+          const user = context.user;
+          // The payload in that case is the new preaching and the variables comes from the params.
+          // return payload.commentAdded.repository_name === variables.repoFullName;
+          return true;
+        }
+      ),
+    },
+  },
   Query: {
     products: () => {
       // validateAuthentication(context.user);
-      return ProductResolver.getProducts();
+      return getProducts();
+    },
+    product: (_, { id }) => {
+      return getProductById(id);
     },
     productsByFilter: (_, { query, properties }) => {
-      return ProductResolver.getProductsByFilter(query, properties);
-    }
+      return getProductsByFilter(query, properties);
+    },
+    productCategories: () => {
+      return getProductCategories();
+    },
+    comments: (_, { productId }) => {
+      return comments(productId);
+    },
   },
   Mutation: {
-    addProduct: (_, { product }) => {
-      return ProductResolver.addProduct(product);
-    }
-  }
+    addProduct: (_, { clientId, product, files }) => {
+      return addProduct(clientId, product, files);
+    },
+    // addProduct: (_, { clientId, product, file }) => {
+    //   return addProduct(clientId, product, file);
+    // },
+    addComment: (_, { comment, productId, userId }) => {
+      return addComment(comment, productId, userId);
+    },
+  },
 };

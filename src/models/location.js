@@ -1,17 +1,17 @@
-import mongoose from 'mongoose';
-import moment from 'moment';
+import mongoose from "mongoose";
+import moment from "moment";
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 /**
  * Product mongoose schema.
  */
 export default mongoose.model(
-  'location',
+  "location",
   new Schema({
     name: String,
     address: String,
     description: String,
     createdDate: { type: String, default: moment().format() },
-  }),
+  })
 );

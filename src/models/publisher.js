@@ -1,13 +1,14 @@
-import mongoose from 'mongoose';
-import moment from 'moment';
+import mongoose from "mongoose";
+import moment from "moment";
 
+//TODO Please Refactor this schema like another.
 const Schema = mongoose.Schema;
 
 /**
  * Product mongoose schema.
  */
 export default mongoose.model(
-  'publisher',
+  "publisher",
   new Schema({
     name: String,
     avatar: String,
@@ -20,5 +21,5 @@ export default mongoose.model(
     genre: String,
     age: String,
     createdDate: { type: String, default: moment().format() },
-  }),
+  })
 );

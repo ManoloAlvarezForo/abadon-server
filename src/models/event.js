@@ -1,18 +1,23 @@
-import mongoose from 'mongoose';
-import moment from 'moment';
+import mongoose from "mongoose";
+import moment from "moment";
 
 /**
  * Options for the base model.
  */
 const baseOptions = {
-  discriminatorKey: 'kind', // our discriminator key.
-  collection: 'events', // the name of our collection.
+  discriminatorKey: "kind", // our discriminator key.
+  collection: "events", // the name of our collection.
 };
+
+/**
+ * Schema class.
+ */
+const { Schema } = mongoose;
 
 /**
  * Base Event schema.
  */
-const eventSchema = new mongoose.Schema(
+const eventSchema = new Schema(
   {
     title: String,
     date: String,
@@ -21,7 +26,7 @@ const eventSchema = new mongoose.Schema(
     description: String,
     createdDate: { type: String, default: moment().format() },
   },
-  baseOptions,
+  baseOptions
 );
 
-export default mongoose.model('Event', eventSchema);
+export default mongoose.model("Event", eventSchema);

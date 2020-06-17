@@ -1,13 +1,14 @@
-import * as EventResolver from '../resolvers/event';
+import * as EventResolver from "../resolvers/event";
+import { gql } from "apollo-server";
 
-export const Event = `
-    union Events = Preaching | PublicMeeting
-    union Event = Preaching | PublicMeeting
+export const Event = gql`
+  union Events = Preaching | PublicMeeting
+  union Event = Preaching | PublicMeeting
 
-    type EventOutput {
-        date: String
-        events: [Events]
-    }
+  type EventOutput {
+    date: String
+    events: [Events]
+  }
 `;
 
 export const EventResolvers = {
@@ -30,12 +31,12 @@ export const EventResolvers = {
   },
   Event: {
     __resolveType(obj) {
-      if (obj.kind === 'preaching') {
-        return 'Preaching';
+      if (obj.kind === "preaching") {
+        return "Preaching";
       }
 
-      if (obj.kind === 'publicMeeting') {
-        return 'PublicMeeting';
+      if (obj.kind === "publicMeeting") {
+        return "PublicMeeting";
       }
 
       return null;
@@ -43,12 +44,12 @@ export const EventResolvers = {
   },
   Events: {
     __resolveType(obj) {
-      if (obj.kind === 'preaching') {
-        return 'Preaching';
+      if (obj.kind === "preaching") {
+        return "Preaching";
       }
 
-      if (obj.kind === 'publicMeeting') {
-        return 'PublicMeeting';
+      if (obj.kind === "publicMeeting") {
+        return "PublicMeeting";
       }
 
       return null;
