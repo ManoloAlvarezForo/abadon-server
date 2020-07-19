@@ -51,18 +51,20 @@ export const Product = gql`
 
   type Product {
     id: String
+    promoPrice: Int
+    promo: Boolean
     productId: String
     client: Client
     thumbs: [Thumb]
-    productName: String
+    name: String
     price: Float
     description: String
     isAvailable: Boolean
     availableQuantity: Int
     createdDate: String
     comments: [Comment]
-    kind: String
-    categories: [String]
+    type: Category
+    categories: [Category]
     promoDescription: String
   }
 
@@ -75,13 +77,15 @@ export const Product = gql`
   }
 
   input ProductInput {
-    productName: String
+    name: String
+    promo: Boolean
+    promoPrice: Int
     price: Float!
     description: String
     availableQuantity: Int
     productId: String
-    kind: String
-    categories: [ProductCategoryInput]
+    type: CategoryInput
+    categories: [CategoryInput]
     promoDescription: String
   }
 `;
@@ -119,13 +123,13 @@ export const ProductResolvers = {
     },
   },
   Mutation: {
-    addProduct: (_, { clientId, product, files }) => {
-      return addProduct(clientId, product, files);
+    product: (_, { clientId, category, subcategories, product, files }) => {
+      return addProduct(clientId, category, subcategories, product, files);
     },
     // addProduct: (_, { clientId, product, file }) => {
     //   return addProduct(clientId, product, file);
     // },
-    addComment: (_, { comment, productId, userId }) => {
+    comment: (_, { comment, productId, userId }) => {
       return addComment(comment, productId, userId);
     },
   },

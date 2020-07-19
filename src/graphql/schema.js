@@ -11,6 +11,7 @@ import { Notification, NotificationResolvers } from "./notification";
 import { Product, ProductResolvers } from "./product";
 import { Room, RoomResolvers } from "./room";
 import { Client, ClientResolvers } from "./client";
+import { Category, CategoryResolvers } from "./category";
 
 const Query = gql`
   type Query {
@@ -28,12 +29,14 @@ const Query = gql`
     product(id: String): Product
     productsByFilter(query: String, properties: [String]): [Product]
     productCategories: [ProductCategory]
-    comments(productId: String): [Comment]
-    rooms: [Room]
-    roomById(id: String): Room
     clients: [Client]
     client(id: String): Client
     clientsByFilter(query: String, properties: [String]): [Client]
+    categories: [Category]
+    category(id: String): Category
+    comments(productId: String): [Comment]
+    rooms: [Room]
+    roomById(id: String): Room
   }
 `;
 
@@ -48,15 +51,18 @@ const Mutation = gql`
       title: String
       text: String
     ): Notification
-    addProduct(
+    product(
       clientId: String
+      type: String
+      categories: [String]
       product: ProductInput
       files: [Upload!]!
     ): Product
-    addComment(comment: String, productId: String, userId: String): Comment
+    client(client: ClientInput, file: Upload!): Client
+    category(category: CategoryInput, file: Upload!): Category
+    comment(comment: String, productId: String, userId: String): Comment
     addRoom(room: RoomInput): Room
     addElementToRoom(element: ElementInput, id: String): Element
-    client(client: ClientInput, file: Upload!): Client
   }
 `;
 
@@ -85,6 +91,7 @@ export const typeDefs = [
   Product,
   Room,
   Client,
+  Category,
 ];
 
 export const resolvers = merge(
@@ -98,7 +105,8 @@ export const resolvers = merge(
   NotificationResolvers,
   ProductResolvers,
   RoomResolvers,
-  ClientResolvers
+  ClientResolvers,
+  CategoryResolvers
 );
 
 export default {

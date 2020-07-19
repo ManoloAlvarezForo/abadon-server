@@ -20,7 +20,6 @@ export default mongoose.model(
     businesPhone: String,
     accountBank: String,
     bank: String,
-    products: [{ type: ObjectId, ref: "Product" }],
     createdDate: { type: String, default: moment().format() },
   })
 );

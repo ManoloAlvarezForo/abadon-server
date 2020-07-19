@@ -1,6 +1,7 @@
 import Product from "../models/product";
 import { getUserById } from "../resolvers/user";
 import { getClientById } from "../resolvers/client";
+import { getTypeById, getCategoryById } from "./category";
 import { addThumbnails } from "../resolvers/thumbnail";
 import { uploadFiles } from "../utils/fileManager";
 
@@ -8,7 +9,9 @@ export const getProducts = async () => {
   return await Product.find({})
     .populate("thumbs")
     .populate("client")
-    .populate({ path: "client", populate: "thumb" });
+    .populate({ path: "client", populate: "thumb" })
+    .populate("type")
+    .populate("categories");
 };
 
 /**
@@ -17,7 +20,13 @@ export const getProducts = async () => {
  * @param {object} product Product to add.
  * @param {object} pubsub for Subscriptions.
  */
-export const addProduct = async (clientId, product, files) => {
+export const addProduct = async (
+  clientId,
+  category,
+  subcategories,
+  product,
+  files
+) => {
   try {
     let newProduct = new Product({ ...product });
     let thumbs = await uploadFiles(files);
@@ -26,7 +35,6 @@ export const addProduct = async (clientId, product, files) => {
       throw Error("[Error]: to upload file.");
     }
     // thumb["name"] = product.productName;
-
     const thumbnailsSaved = await addThumbnails(thumbs);
 
     newProduct.thumbs = thumbnailsSaved;
@@ -36,19 +44,33 @@ export const addProduct = async (clientId, product, files) => {
     if (clientId) {
       let foundClient = await getClientById(clientId);
       newProduct.client = foundClient._id;
-      productSaved = await newProduct.save();
-      foundClient.products.unshift(productSaved._id);
-      await foundClient.save();
+      // productSaved = await newProduct.save();
+      // foundClient.products.unshift(productSaved._id);
+      // await foundClient.save();
       console.log(`[INFO]: product added to a client succsessfully.`);
     }
-    {
-      productSaved = await newProduct.save();
+    // {
+    //   productSaved = await newProduct.save();
+    // }
+
+    if (category) {
+      console.log("Category ID: ", category);
+      const foundType = await getTypeById(category);
+      newProduct.type = foundType._id;
     }
 
-    const productPopulated = await getProductById(productSaved.id);
-    return productPopulated;
+    const categoriesResponse = await getCategoryById(subcategories);
+
+    if (categoriesResponse) {
+      newProduct.categories = [...newProduct.categories, categoriesResponse];
+    }
+
+    productSaved = await newProduct.save();
+    console.log(productSaved);
+    // const productPopulated = await getProductById(productSaved.id);
+    return null;
   } catch (error) {
-    console.log(`[Error]: Error to save a product.`);
+    console.log(`[Error]: Error to save a product. `, error);
   }
   // Subscription send
   // pubsub.publish("productAdded", {
@@ -64,7 +86,10 @@ export const addProduct = async (clientId, product, files) => {
 export const getProductById = async (id) => {
   const foundProduct = await Product.findById(id)
     .populate("thumbs")
-    .populate("client");
+    .populate("client")
+    .populate("type")
+    .populate("categories")
+    .populate({ path: "client", populate: "thumb" });
   return foundProduct;
 };
 

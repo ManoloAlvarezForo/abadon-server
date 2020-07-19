@@ -3,7 +3,9 @@ import moment from "moment";
 
 const { Schema } = mongoose;
 const SCHEMA_NAME = "product";
-
+const {
+  Types: { ObjectId },
+} = Schema;
 /**
  * Product mongoose schema.
  */
@@ -11,16 +13,16 @@ export default mongoose.model(
   SCHEMA_NAME,
   new Schema({
     productId: { type: String, default: "" },
-    client: { type: Schema.Types.ObjectId, ref: "client" },
-    thumbs: [{ type: Schema.Types.ObjectId, ref: "thumbnail" }],
-    productName: String,
+    client: { type: ObjectId, ref: "client" },
+    thumbs: [{ type: ObjectId, ref: "thumbnail" }],
+    name: String,
     promo: { type: Boolean, default: false },
-    newPrice: { type: Number, default: 0.0 },
+    promoPrice: { type: Number, default: 0.0 },
     price: { type: Number, default: 0.0 },
     description: { type: String, default: "" },
     promoDescription: { type: String, default: "" },
     isAvailable: { type: Boolean, default: false },
-    availableQuantity: { type: Number, default: 0 },
+    quantity: { type: Number, default: 0 },
     createdDate: { type: String, default: moment().format() },
     comments: [
       {
@@ -32,19 +34,9 @@ export default mongoose.model(
     ],
     //TODO: Maybe not generic property.
     buildTime: { type: String, default: "" },
-    kind: [
-      {
-        type: String,
-        enum: ["SERVICE", "PRODUCT", "FOOD"],
-      },
-    ],
     //TODO: Should be dynamic
-    categories: [
-      {
-        type: String,
-        enum: ["CARNE", "POLLO", "CHANCHO", "PASTA"],
-      },
-    ],
+    type: { type: ObjectId, ref: "category" },
+    categories: [{ type: ObjectId, ref: "category", default: [] }],
   })
 );
 
