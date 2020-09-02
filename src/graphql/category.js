@@ -1,7 +1,8 @@
 import {
-  addCategory,
+  addSubcategory,
   getCategories,
   getCategoryById,
+  setSubcategoriesToCategory,
 } from "../resolvers/category";
 import { gql } from "apollo-server";
 
@@ -10,6 +11,8 @@ export const Category = gql`
     id: ID
     name: String
     label: String
+    parent: Category
+    categories: [Category]
     thumb: Thumb
     createdDate: String
   }
@@ -33,6 +36,12 @@ export const CategoryResolvers = {
   Mutation: {
     category: (_, { category, file }) => {
       return addCategory(category, file);
+    },
+    addSubcategory: (_, { targetCategoryId, category, file }) => {
+      return addSubcategory(targetCategoryId, category, file);
+    },
+    setSubcategoriesToCategory: (_, { targetId, categories }) => {
+      return setSubcategoriesToCategory(targetId, categories);
     },
   },
 };

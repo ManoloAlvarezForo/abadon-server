@@ -1,7 +1,7 @@
 import Product from "../models/product";
 import { getUserById } from "../resolvers/user";
 import { getClientById } from "../resolvers/client";
-import { getTypeById, getCategoryById } from "./category";
+import { getCategoryById, createCategories } from "./category";
 import { addThumbnails } from "../resolvers/thumbnail";
 import { uploadFiles } from "../utils/fileManager";
 
@@ -22,8 +22,8 @@ export const getProducts = async () => {
  */
 export const addProduct = async (
   clientId,
-  category,
-  subcategories,
+  type,
+  categories,
   product,
   files
 ) => {
@@ -53,13 +53,13 @@ export const addProduct = async (
     //   productSaved = await newProduct.save();
     // }
 
-    if (category) {
-      console.log("Category ID: ", category);
-      const foundType = await getTypeById(category);
+    if (type) {
+      console.log("Category ID: ", type);
+      const foundType = await getCategoryById(type);
       newProduct.type = foundType._id;
     }
-
-    const categoriesResponse = await getCategoryById(subcategories);
+    console.log(categories);
+    const categoriesResponse = await createCategories(categories);
 
     if (categoriesResponse) {
       newProduct.categories = [...newProduct.categories, categoriesResponse];
@@ -68,7 +68,7 @@ export const addProduct = async (
     productSaved = await newProduct.save();
     console.log(productSaved);
     // const productPopulated = await getProductById(productSaved.id);
-    return null;
+    return productSaved;
   } catch (error) {
     console.log(`[Error]: Error to save a product. `, error);
   }

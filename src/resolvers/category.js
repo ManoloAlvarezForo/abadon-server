@@ -5,8 +5,8 @@ import { addThumbnail } from "./thumbnail";
 /**
  * Gets all Categorys.
  */
-export const getCategorys = async () => {
-  return await Category.find({}).populate("thumb");
+export const getCategories = async () => {
+  return await Category.find({}).populate("thumb").populate("categories");
 };
 
 /**
@@ -17,15 +17,18 @@ export const getCategorys = async () => {
  */
 export const addCategory = async (category, file) => {
   const newCategory = new Category({ ...category });
-  let thumb = await uploadFile(file);
 
-  if (!thumb) {
-    throw Error("[Error]: to upload file.");
+  if (file) {
+    let thumb = await uploadFile(file);
+
+    if (!thumb) {
+      throw Error("[Error]: to upload file.");
+    }
+    thumb["name"] = Category.brand;
+    const thumbnailSaved = await addThumbnail(thumb);
+
+    newCategory.thumb = thumbnailSaved._id;
   }
-  thumb["name"] = Category.brand;
-  const thumbnailSaved = await addThumbnail(thumb);
-
-  newCategory.thumb = thumbnailSaved._id;
 
   const response = await newCategory.save();
   return response;
@@ -37,7 +40,10 @@ export const addCategory = async (category, file) => {
  * @param {string} id String that represents the Category id.
  */
 export const getCategoryById = async (id) => {
-  return await Category.findById(id).populate("thumb");
+  return await Category.findById(id)
+    .populate("thumb")
+    .populate("categories")
+    .populate({ path: "categories", populate: "thumb" });
 };
 
 /**
@@ -68,26 +74,30 @@ export const getCategorysByFilter = async (query, properties = []) => {
   }
 };
 
-addCategoriesToParentByIds = async (categoriesIds, parentId) => {
-  // let foundTaegetCategory = await Category.findById(parentId);
-  // const categoriesIds = categoriesIds.map(c => {
-  //   try {
-  //     let categoryFound = await getCategoryById(c.id);
-  //     categoryFound.parent = parentId;
-  //     const categorySaved = await categoryFound.save();
-  //     return categorySaved._id;
-  //   } catch (error) {
-  //     console.log(`[Error]: Error to get category id [${c.id}]: ${error}`)
-  //   }
-  // });
-  // foundTaegetCategory.categories = [...foundTaegetCategory.categories, ...categoriesIds]
-  // response = await foundTaegetCategory.save();
+export const addCategoriesToParentByIds = async (categoriesIds, parentId) => {
+  let foundTaegetCategory = await Category.findById(parentId);
+  let response = null;
+  for (let i = 0; i < categoriesIds.length; i++) {
+    const categoryId = categoriesIds[i];
+    try {
+      let categoryFound = await getCategoryById(categoryId);
+      categoryFound.parent = parentId;
+      const categorySaved = await categoryFound.save();
+      foundTaegetCategory.categories.push(categorySaved._id);
+      response = await foundTaegetCategory.save();
+    } catch (error) {
+      console.log(`[Error]: Error to add categories to category parent.`);
+    }
+
+    return response;
+  }
 };
 
-createCategories = async (categories) => {
+export const createCategories = async (categories) => {
+  console.log("createCategories");
   let response = [];
   for (let i = 0; i < categories.length; i++) {
-    const categoryItem = categoriesIds[i];
+    const categoryItem = categories[i];
     try {
       const { category, file } = categoryItem;
       const categoryAdded = await addCategory(category, file);
@@ -95,6 +105,25 @@ createCategories = async (categories) => {
     } catch (error) {
       console.log(`[Error]: Error to create a category from a list`);
     }
+  }
+
+  return response;
+};
+
+export const addSubcategory = async (targetCategoryId, category, file) => {
+  let response = null;
+
+  try {
+    let newCategory = await addCategory(category, file);
+    let foundCategory = await getCategoryById(targetCategoryId);
+    newCategory.parent = foundCategory._id;
+    foundCategory.categories.push(newCategory._id);
+    await newCategory.save();
+    response = await foundCategory.save();
+  } catch (error) {
+    console.log(
+      `[Error]: Error to add subcategory: Method [addSubcategory]: ${error}`
+    );
   }
 
   return response;
@@ -113,19 +142,6 @@ export const setSubcategoriesToCategory = async (
   let response = null;
   if (categories.length) {
     response = await addCategoriesToParentByIds(categories, targetCategoryId);
-  }
-
-  return response;
-};
-
-export const createSubcategoriesToCategory = async (
-  targetCategoryId,
-  subcategories = []
-) => {
-  let response = null;
-  if (subcategories.length) {
-    let foundTaegetCategory = await Category.findById(targetCategoryId);
-    const categoriesIds = getCategoriesByIds(subcategories);
   }
 
   return response;

@@ -60,6 +60,12 @@ const Mutation = gql`
     ): Product
     client(client: ClientInput, file: Upload!): Client
     category(category: CategoryInput, file: Upload!): Category
+    addSubcategory(
+      targetCategoryId: String
+      category: CategoryInput
+      file: Upload!
+    ): Category
+    setSubcategoriesToCategory(targetId: String, categories: [String]): Category
     comment(comment: String, productId: String, userId: String): Comment
     addRoom(room: RoomInput): Room
     addElementToRoom(element: ElementInput, id: String): Element

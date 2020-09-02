@@ -123,8 +123,8 @@ export const ProductResolvers = {
     },
   },
   Mutation: {
-    product: (_, { clientId, category, subcategories, product, files }) => {
-      return addProduct(clientId, category, subcategories, product, files);
+    product: (_, { clientId, type, categories, product, files }) => {
+      return addProduct(clientId, type, categories, product, files);
     },
     // addProduct: (_, { clientId, product, file }) => {
     //   return addProduct(clientId, product, file);
