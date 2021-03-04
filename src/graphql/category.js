@@ -3,6 +3,7 @@ import {
   getCategories,
   getCategoryById,
   setSubcategoriesToCategory,
+  addCategory
 } from "../resolvers/category";
 import { gql } from "apollo-server";
 
@@ -25,9 +26,9 @@ export const Category = gql`
 
 export const CategoryResolvers = {
   Query: {
-    categories: () => {
+    categories: (_,{parentId}) => {
       // validateAuthentication(context.user);
-      return getCategories();
+      return getCategories(parentId);
     },
     category: (_, { id }) => {
       return getCategoryById(id);

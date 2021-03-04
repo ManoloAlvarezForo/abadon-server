@@ -12,14 +12,13 @@
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/babel-node",
       "runtimeArgs": ["--nolazy"],
       "env": {
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false,
+      "sourceMaps": true,
       "outFiles": []
     }
   ]

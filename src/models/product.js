@@ -34,9 +34,9 @@ export default mongoose.model(
     ],
     //TODO: Maybe not generic property.
     buildTime: { type: String, default: "" },
-    //TODO: Should be dynamic
-    type: { type: ObjectId, ref: "category" },
-    categories: [{ type: ObjectId, ref: "category", default: [] }],
+    //TODO: For moment string maybe should be enum, type: product, service etc
+    type: { type: String, default: 'product' },
+    categories: { type: [String], default: [] },
   })
 );
 

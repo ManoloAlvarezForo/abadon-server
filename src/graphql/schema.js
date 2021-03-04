@@ -29,10 +29,12 @@ const Query = gql`
     product(id: String): Product
     productsByFilter(query: String, properties: [String]): [Product]
     productCategories: [ProductCategory]
+    productsByCategory(categoryId: String): [Product]
+    promoProductsByCategory(categoryId: String): [Product]
     clients: [Client]
     client(id: String): Client
     clientsByFilter(query: String, properties: [String]): [Client]
-    categories: [Category]
+    categories(parentId: String): [Category]
     category(id: String): Category
     comments(productId: String): [Comment]
     rooms: [Room]
@@ -53,8 +55,6 @@ const Mutation = gql`
     ): Notification
     product(
       clientId: String
-      type: String
-      categories: [String]
       product: ProductInput
       files: [Upload!]!
     ): Product

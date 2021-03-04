@@ -9,7 +9,7 @@ export default mongoose.model(
   new Schema({
     name: String,
     label: String,
-    parent: { type: Schema.Types.ObjectId, ref: "category" },
+    parent: { type: Schema.Types.ObjectId, ref: "category", default: null },
     categories: [{ type: Schema.Types.ObjectId, ref: "category", default: [] }],
     thumb: { type: Schema.Types.ObjectId, ref: "thumbnail" },
     createdDate: { type: String, default: moment().format() },

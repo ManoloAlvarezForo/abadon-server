@@ -5,14 +5,22 @@ import { getCategoryById, createCategories } from "./category";
 import { addThumbnails } from "../resolvers/thumbnail";
 import { uploadFiles } from "../utils/fileManager";
 
+// export const getProducts = async () => {
+//   return await Product.find({})
+//     .populate("thumbs")
+//     .populate("client")
+//     .populate({ path: "client", populate: "thumb" })
+//     .populate("type")
+//     .populate("categories");
+// };
+
 export const getProducts = async () => {
   return await Product.find({})
     .populate("thumbs")
     .populate("client")
-    .populate({ path: "client", populate: "thumb" })
-    .populate("type")
-    .populate("categories");
+    .populate({ path: "client", populate: "thumb" });
 };
+
 
 /**
  * Adds a new product in the product collection.
@@ -20,13 +28,7 @@ export const getProducts = async () => {
  * @param {object} product Product to add.
  * @param {object} pubsub for Subscriptions.
  */
-export const addProduct = async (
-  clientId,
-  type,
-  categories,
-  product,
-  files
-) => {
+export const addProduct = async (clientId, product, files = []) => {
   try {
     let newProduct = new Product({ ...product });
     let thumbs = await uploadFiles(files);
@@ -38,7 +40,7 @@ export const addProduct = async (
     const thumbnailsSaved = await addThumbnails(thumbs);
 
     newProduct.thumbs = thumbnailsSaved;
-    let productSaved = {};
+    // let productSaved = {};
     console.log(`[INFO]: product added succsessfully.`);
 
     if (clientId) {
@@ -53,22 +55,23 @@ export const addProduct = async (
     //   productSaved = await newProduct.save();
     // }
 
-    if (type) {
-      console.log("Category ID: ", type);
-      const foundType = await getCategoryById(type);
-      newProduct.type = foundType._id;
-    }
-    console.log(categories);
-    const categoriesResponse = await createCategories(categories);
+    // if (type) {
+    //   console.log("Category ID: ", type);
+    //   const foundType = await getCategoryById(type);
+    //   newProduct.type = foundType._id;
+    // }
 
-    if (categoriesResponse) {
-      newProduct.categories = [...newProduct.categories, categoriesResponse];
-    }
+    // console.log(categories);
+    // const categoriesResponse = await createCategories(categories);
 
-    productSaved = await newProduct.save();
-    console.log(productSaved);
+    // if (categoriesResponse) {
+    //   newProduct.categories = [...newProduct.categories, categoriesResponse];
+    // }
+
+    // productSaved = await newProduct.save();
+    // console.log(productSaved);
     // const productPopulated = await getProductById(productSaved.id);
-    return productSaved;
+    return await newProduct.save();
   } catch (error) {
     console.log(`[Error]: Error to save a product. `, error);
   }
@@ -87,11 +90,26 @@ export const getProductById = async (id) => {
   const foundProduct = await Product.findById(id)
     .populate("thumbs")
     .populate("client")
-    .populate("type")
-    .populate("categories")
     .populate({ path: "client", populate: "thumb" });
   return foundProduct;
 };
+
+export const getProductsByCategoryId = async categoryId => {
+  return await Product.find({ categories: { $in: categoryId } })
+    .populate("thumbs")
+    .populate("client")
+    .populate({ path: "client", populate: "thumb" });
+};
+
+// export const getAllPromos = async 
+
+export const getPromoProductsByCategory = async categoryId => {
+  return await Product.find({ categories: { $in: categoryId }, promo: true })
+  .populate("thumbs")
+  .populate("client")
+  .populate({ path: "client", populate: "thumb" }); 
+}
+
 
 /**
  * Gets an product array by filter and properties.

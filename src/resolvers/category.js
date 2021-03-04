@@ -5,9 +5,13 @@ import { addThumbnail } from "./thumbnail";
 /**
  * Gets all Categorys.
  */
-export const getCategories = async () => {
-  return await Category.find({}).populate("thumb").populate("categories");
+export const getCategories = async parentId => {
+  return await Category.find({parent: parentId}).populate("thumb").populate("categories");
 };
+
+export const getSubcategoriesByCategoryId = async (categoryId) => {
+ const response = await getCategoryById(categoryId)
+}
 
 /**
  * Adds a new Category to Database.

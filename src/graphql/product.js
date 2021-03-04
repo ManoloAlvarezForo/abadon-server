@@ -6,6 +6,8 @@ import {
   addComment,
   comments,
   getProductCategories,
+  getProductsByCategoryId,
+  getPromoProductsByCategory,
 } from "../resolvers/product";
 import { withFilter } from "graphql-subscriptions";
 import { pubsub } from "../app";
@@ -63,8 +65,8 @@ export const Product = gql`
     availableQuantity: Int
     createdDate: String
     comments: [Comment]
-    type: Category
-    categories: [Category]
+    type: String
+    categories: [String]
     promoDescription: String
   }
 
@@ -84,8 +86,8 @@ export const Product = gql`
     description: String
     availableQuantity: Int
     productId: String
-    type: CategoryInput
-    categories: [CategoryInput]
+    type: String
+    categories: [String]
     promoDescription: String
   }
 `;
@@ -121,10 +123,16 @@ export const ProductResolvers = {
     comments: (_, { productId }) => {
       return comments(productId);
     },
+    productsByCategory: (_, {categoryId}) => {
+      return getProductsByCategoryId(categoryId);
+    },
+    promoProductsByCategory: (_, {categoryId}) => {
+      return getPromoProductsByCategory(categoryId);
+    }
   },
   Mutation: {
-    product: (_, { clientId, type, categories, product, files }) => {
-      return addProduct(clientId, type, categories, product, files);
+    product: (_, { clientId, product, files }) => {
+      return addProduct(clientId, product, files);
     },
     // addProduct: (_, { clientId, product, file }) => {
     //   return addProduct(clientId, product, file);
